@@ -1,0 +1,26 @@
+{
+  "name": "blogserver",
+  "version": "1.0.0",
+  "description": "node server for personal blog",
+  "main": "app.js",
+  "engines": {
+    "node": "v12.14.1",
+    "npm": "7.7.5"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/witlessmean/blog-server.git"
+  },
+  "author": "Shawn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/witlessmean/blog-server/issues"
+  },
+  "homepage": "https://github.com/witlessmean/blog-server#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
