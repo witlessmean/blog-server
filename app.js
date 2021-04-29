@@ -15,11 +15,7 @@ app.use('/', (req, res, next) => {
   res.send('<h1>Welcome back</h1>')
 });
 
-app.get('/', (req, res, next) => {
 
-  
-  res.send('hello')
-});
 
 
 
