@@ -1,11 +1,29 @@
 const express = require("express");
+const jwt = require('jsonwebtoken');
 const db = require("../utils/database");
 
 const router = express.Router();
 
 //db.setMaxListeners(0)
 
+router.post("/admin-password", (req, res) => {
+  const postData = req.body;
+  const postedPassword = postData.password;
+  db.execute(
+    `SELECT admin_password FROM password`
+    ).then((result) => {
+     const password = result[0][0].admin_password;
+      if(password === postedPassword){
+      res.status(200).send('success');
+    }else{
+      res.status(200).send('wrong password')
+    }
+    }).catch((err) => {
+      console.log(err)
+    })
+});
 
+/////////////////////////old code
 router.post("/add-post", (req, res, next) => {
   res.send("<h1>add a post please</h1>");
   const postData = req.body;
