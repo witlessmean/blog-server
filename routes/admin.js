@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const db = require("../utils/database");
-
 const router = express.Router();
 
 //db.setMaxListeners(0)
@@ -12,16 +12,40 @@ router.post("/admin-password", (req, res) => {
   db.execute(
     `SELECT admin_password FROM password`
     ).then((result) => {
-     const password = result[0][0].admin_password;
-      if(password === postedPassword){
+    const password = JSON.stringify(result[0][0].admin_password);
+    const compared = bcrypt.compare(postedPassword, password)
+     if(compared){
+      
       res.status(200).send('success');
     }else{
       res.status(200).send('wrong password')
     }
     }).catch((err) => {
-      console.log(err)
+      console.error(err);
     })
 });
+
+router.post("/admin-page/password-reset", async (req, res) => {
+  const postData = req.body;
+  const checkedPW = JSON.stringify(postData.checkedPW);
+  const pwChange = postData.pwChange;
+
+  const salt = await bcrypt.genSalt();
+  const hashed = await bcrypt.hash(checkedPW, salt);
+  const hashedCheckedPW = JSON.stringify(hashed);
+
+  if(pwChange){
+  db.execute(
+    `UPDATE password SET admin_password = ${hashedCheckedPW} WHERE password_id = 1
+    `
+    ).then(() => {
+      res.status(201).send('password successfully changed')
+  }).catch((err) => {
+    console.error(err)
+  })
+}
+})
+
 
 /////////////////////////old code
 router.post("/add-post", (req, res, next) => {
