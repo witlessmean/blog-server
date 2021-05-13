@@ -6,40 +6,44 @@ const router = express.Router();
 
 //db.setMaxListeners(0)
 
-router.post("/admin-password", (req, res) => {
-  const postData = req.body;
-  const postedPassword = postData.password;
-  db.execute(
+router.post("/admin-password", async(req, res) => {
+  const postData = await req.body;
+  const postedPassword = await postData.password;
+  
+  const getPassword = await db.execute(
     `SELECT admin_password FROM password`
-    ).then((result) => {
-    const password = JSON.stringify(result[0][0].admin_password);
-    const compared = bcrypt.compare(postedPassword, password)
-     if(compared){
-      
-      res.status(200).send('success');
-    }else{
-      res.status(200).send('wrong password')
-    }
-    }).catch((err) => {
-      console.error(err);
-    })
+    )
+    const password = await getPassword[0][0].admin_password
+
+ bcrypt.compare(postedPassword, password).then((result) => {
+   if(result){
+    return res.status(201).send('success')
+   }else{
+    return res.status(401).send('wrong password')
+   }
+ }).catch((err) => {
+   console.err(err)
+ })
+
+ 
+
+  
 });
 
 router.post("/admin-page/password-reset", async (req, res) => {
   const postData = req.body;
-  const checkedPW = JSON.stringify(postData.checkedPW);
+  const checkedPW = postData.checkedPW;
   const pwChange = postData.pwChange;
 
   const salt = await bcrypt.genSalt();
-  const hashed = await bcrypt.hash(checkedPW, salt);
-  const hashedCheckedPW = JSON.stringify(hashed);
-
+  const hashedCheckedPW = await bcrypt.hash(checkedPW, salt);
   if(pwChange){
-  db.execute(
-    `UPDATE password SET admin_password = ${hashedCheckedPW} WHERE password_id = 1
+  return db.execute(
+    `UPDATE password SET admin_password = ${JSON.stringify(hashedCheckedPW)} WHERE password_id = 1
     `
     ).then(() => {
-      res.status(201).send('password successfully changed')
+     return res.status(201).send('password successfully changed')
+
   }).catch((err) => {
     console.error(err)
   })
